@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="section-card">
+            <h1 class="h4 mb-3">提交作业：{{ assignment.title }}</h1>
+            <p class="text-muted">截止时间：{{ assignment.due_date|date:"Y-m-d H:i" }}</p>
+            <p>{{ assignment.description }}</p>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button class="btn btn-primary" type="submit">{% if submission %}更新提交{% else %}提交作业{% endif %}</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

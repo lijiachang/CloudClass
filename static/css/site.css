@@ -1,0 +1,122 @@
+:root {
+    --bg: #f4efe5;
+    --surface: #fffdf8;
+    --primary: #1f4b99;
+    --accent: #d48a1f;
+    --ink: #1d2939;
+    --muted: #667085;
+}
+
+body {
+    background:
+        radial-gradient(circle at top left, rgba(212, 138, 31, 0.12), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(31, 75, 153, 0.12), transparent 30%),
+        var(--bg);
+    color: var(--ink);
+}
+
+.app-navbar {
+    background: linear-gradient(90deg, #102c57, #1f4b99);
+}
+
+.hero-card,
+.section-card,
+.stat-card,
+.course-card,
+.glass-panel {
+    border-radius: 20px;
+    background: rgba(255, 253, 248, 0.92);
+    border: 1px solid rgba(16, 44, 87, 0.08);
+    box-shadow: 0 14px 36px rgba(16, 44, 87, 0.08);
+}
+
+.hero-card,
+.section-card,
+.glass-panel {
+    padding: 2rem;
+}
+
+.course-card {
+    padding: 1.5rem;
+}
+
+.banner-image {
+    height: 180px;
+    object-fit: cover;
+}
+
+.stat-tile,
+.stat-card {
+    padding: 1rem 1.2rem;
+}
+
+.stat-label,
+.stat-card span {
+    display: block;
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin-bottom: 0.4rem;
+}
+
+.stat-value,
+.stat-card strong {
+    font-size: 1.6rem;
+    font-weight: 700;
+}
+
+.list-item-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.9rem 0;
+    border-bottom: 1px solid rgba(102, 112, 133, 0.16);
+}
+
+.list-item-row:last-child {
+    border-bottom: 0;
+}
+
+.comment-card {
+    background: #fff;
+    border: 1px solid rgba(16, 44, 87, 0.08);
+    border-radius: 14px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+form p {
+    margin-bottom: 1rem;
+}
+
+form label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+form input,
+form textarea,
+form select {
+    width: 100%;
+    border: 1px solid #d0d5dd;
+    border-radius: 12px;
+    padding: 0.75rem 0.9rem;
+}
+
+textarea {
+    min-height: 120px;
+}
+
+@media (max-width: 768px) {
+    .hero-card,
+    .section-card,
+    .glass-panel {
+        padding: 1.25rem;
+    }
+
+    .list-item-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}

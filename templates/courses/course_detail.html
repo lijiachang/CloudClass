@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block title %}{{ course.title }}{% endblock %}
+{% block content %}
+<div class="section-card mb-4">
+    <div class="d-flex flex-wrap justify-content-between gap-3">
+        <div>
+            <h1 class="h3 mb-2">{{ course.title }}</h1>
+            <p class="text-muted mb-2">教师：{{ course.teacher.full_name }} | 分类：{{ course.category.name|default:"未分类" }}</p>
+            <p class="mb-0">{{ course.description|default:course.summary }}</p>
+        </div>
+        <div class="d-flex gap-2 align-items-start">
+            {% if user.is_authenticated and user.is_student and not is_enrolled %}
+                <a class="btn btn-primary" href="{% url 'courses:enroll' course.pk %}">加入课程</a>
+            {% endif %}
+            {% if user.is_authenticated and user == course.teacher %}
+                <a class="btn btn-outline-primary" href="{% url 'resources:create' %}">上传资料</a>
+                <a class="btn btn-outline-secondary" href="{% url 'assignments:create' %}">发布作业</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-4">
+        <div class="section-card mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="h5 mb-0">教学资料</h2>
+                {% if user.is_authenticated and user == course.teacher %}
+                    <a href="{% url 'resources:manage' course.pk %}">管理</a>
+                {% endif %}
+            </div>
+            {% for material in materials %}
+                <div class="mb-3">
+                    <div class="fw-semibold">{{ material.title }}</div>
+                    <div class="small text-muted">{{ material.get_material_type_display }}</div>
+                    {% if material.file %}
+                        <a href="{{ material.file.url }}">下载文件</a>
+                    {% elif material.external_url %}
+                        <a href="{{ material.external_url }}" target="_blank">打开链接</a>
+                    {% endif %}
+                </div>
+            {% empty %}
+                <p class="text-muted mb-0">暂无资料。</p>
+            {% endfor %}
+        </div>
+        <div class="section-card">
+            <h2 class="h5 mb-3">讨论区</h2>
+            {% if user.is_authenticated %}
+                <a class="btn btn-sm btn-primary mb-3" href="{% url 'discussions:course_create' course.pk %}">发帖交流</a>
+            {% endif %}
+            {% for post in posts %}
+                <div class="mb-3">
+                    <div class="fw-semibold">
+                        {% if post.is_pinned %}<span class="badge text-bg-warning">置顶</span>{% endif %}
+                        <a href="{% url 'discussions:detail' post.pk %}">{{ post.title }}</a>
+                    </div>
+                    <div class="small text-muted">{{ post.author.full_name }} · {{ post.created_at|date:"Y-m-d H:i" }}</div>
+                </div>
+            {% empty %}
+                <p class="text-muted mb-0">暂无讨论内容。</p>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="col-lg-8">
+        <div class="section-card">
+            <h2 class="h5 mb-3">课程作业</h2>
+            {% for assignment in assignments %}
+                <div class="list-item-row">
+                    <div>
+                        <div class="fw-semibold">{{ assignment.title }}</div>
+                        <div class="small text-muted">截止：{{ assignment.due_date|date:"Y-m-d H:i" }}</div>
+                    </div>
+                    <div class="d-flex gap-2">
+                        {% if user.is_authenticated and user.is_student and is_enrolled %}
+                            <a class="btn btn-sm btn-primary" href="{% url 'assignments:submit' assignment.pk %}">提交作业</a>
+                        {% endif %}
+                        {% if user.is_authenticated and user == course.teacher %}
+                            <a class="btn btn-sm btn-outline-secondary" href="{% url 'assignments:review_list' assignment.pk %}">查看提交</a>
+                        {% endif %}
+                    </div>
+                </div>
+            {% empty %}
+                <p class="text-muted mb-0">暂无作业。</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero-card mb-4">
+    <div class="row align-items-center">
+        <div class="col-lg-7">
+            <span class="badge text-bg-warning mb-3">Python + Django 4.2 + MySQL 8.0</span>
+            <h1 class="display-5 fw-bold">基于 Python 的网络教学平台</h1>
+            <p class="lead text-muted">面向学生、教师、管理员的课程学习、资料共享、作业处理与讨论答疑一体化系统。</p>
+            <div class="d-flex gap-2 flex-wrap">
+                <a class="btn btn-primary" href="{% url 'courses:list' %}">进入课程中心</a>
+                {% if user.is_authenticated %}
+                    <a class="btn btn-outline-dark" href="{% url 'core:dashboard' %}">进入我的工作台</a>
+                {% else %}
+                    <a class="btn btn-outline-dark" href="{% url 'accounts:login' %}">登录系统</a>
+                {% endif %}
+            </div>
+        </div>
+        <div class="col-lg-5 mt-4 mt-lg-0">
+            <div class="glass-panel">
+                <div class="row g-3">
+                    <div class="col-6">
+                        <div class="stat-tile">
+                            <div class="stat-label">角色体系</div>
+                            <div class="stat-value">3 类</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="stat-tile">
+                            <div class="stat-label">核心模块</div>
+                            <div class="stat-value">6 个</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="stat-tile">
+                            <div class="stat-label">作业流程</div>
+                            <div class="stat-value">闭环</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="stat-tile">
+                            <div class="stat-label">演示方式</div>
+                            <div class="stat-value">可答辩</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="mb-4">
+    <div class="row g-4">
+        {% for banner in banners %}
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100">
+                    {% if banner.image %}
+                        <img src="{{ banner.image.url }}" class="card-img-top banner-image" alt="{{ banner.title }}">
+                    {% endif %}
+                    <div class="card-body">
+                        <h3 class="h5">{{ banner.title }}</h3>
+                        <p class="text-muted">{{ banner.subtitle }}</p>
+                        {% if banner.link %}
+                            <a href="{{ banner.link }}" class="btn btn-sm btn-outline-primary" target="_blank">查看链接</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-12">
+                <div class="alert alert-light border">当前暂无 Banner，管理员可在后台或管理页补充展示内容。</div>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="row g-4">
+    <div class="col-lg-7">
+        <div class="section-card">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="h4 mb-0">精品课程</h2>
+                <a href="{% url 'courses:list' %}">查看全部</a>
+            </div>
+            <div class="row g-3">
+                {% for course in courses %}
+                    <div class="col-md-6">
+                        <div class="course-card h-100">
+                            <h3 class="h5">{{ course.title }}</h3>
+                            <p class="small text-muted mb-2">教师：{{ course.teacher.full_name }}</p>
+                            <p class="mb-3">{{ course.summary }}</p>
+                            <a class="btn btn-sm btn-primary" href="{% url 'courses:detail' course.pk %}">查看课程</a>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="col-12"><p class="text-muted mb-0">暂无课程数据。</p></div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-5">
+        <div class="section-card h-100">
+            <h2 class="h4 mb-3">最新公告</h2>
+            <div class="list-group list-group-flush">
+                {% for item in announcements %}
+                    <div class="list-group-item px-0">
+                        <div class="fw-semibold">{{ item.title }}</div>
+                        <div class="small text-muted">{{ item.created_at|date:"Y-m-d H:i" }}</div>
+                        <p class="mb-0 mt-2">{{ item.content|truncatechars:100 }}</p>
+                    </div>
+                {% empty %}
+                    <p class="text-muted mb-0">暂无公告。</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

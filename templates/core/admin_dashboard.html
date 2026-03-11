@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 mb-1">管理员工作台</h1>
+        <p class="text-muted mb-0">管理用户、公告、Banner 和平台概况。</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a class="btn btn-primary" href="{% url 'core:announcement_create' %}">发布公告</a>
+        <a class="btn btn-outline-primary" href="{% url 'core:banner_create' %}">发布 Banner</a>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-2"><div class="stat-card"><span>用户</span><strong>{{ stats.user_count }}</strong></div></div>
+    <div class="col-md-2"><div class="stat-card"><span>课程</span><strong>{{ stats.course_count }}</strong></div></div>
+    <div class="col-md-2"><div class="stat-card"><span>资料</span><strong>{{ stats.material_count }}</strong></div></div>
+    <div class="col-md-3"><div class="stat-card"><span>作业</span><strong>{{ stats.assignment_count }}</strong></div></div>
+    <div class="col-md-3"><div class="stat-card"><span>讨论</span><strong>{{ stats.discussion_count }}</strong></div></div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="section-card">
+            <h2 class="h5 mb-3">公告管理</h2>
+            {% for item in announcements %}
+                <div class="list-item-row">
+                    <div>
+                        <div class="fw-semibold">{{ item.title }}</div>
+                        <div class="small text-muted">{{ item.created_at|date:"Y-m-d H:i" }}</div>
+                    </div>
+                    <span class="badge {% if item.is_published %}text-bg-success{% else %}text-bg-secondary{% endif %}">
+                        {% if item.is_published %}已发布{% else %}草稿{% endif %}
+                    </span>
+                </div>
+            {% empty %}
+                <p class="text-muted mb-0">暂无公告。</p>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="section-card">
+            <h2 class="h5 mb-3">Banner 管理</h2>
+            {% for banner in banners %}
+                <div class="list-item-row">
+                    <div>
+                        <div class="fw-semibold">{{ banner.title }}</div>
+                        <div class="small text-muted">{{ banner.subtitle }}</div>
+                    </div>
+                    <span class="badge {% if banner.is_active %}text-bg-success{% else %}text-bg-secondary{% endif %}">
+                        {% if banner.is_active %}启用{% else %}停用{% endif %}
+                    </span>
+                </div>
+            {% empty %}
+                <p class="text-muted mb-0">暂无 Banner。</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

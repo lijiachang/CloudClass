@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}学生注册{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <h2 class="h4 mb-4">学生注册</h2>
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button class="btn btn-primary" type="submit">注册并登录</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

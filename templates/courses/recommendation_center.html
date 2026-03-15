@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block title %}推荐中心{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 mb-1">推荐中心</h1>
+        <p class="text-muted mb-0">根据浏览、收藏、选课标签和平台热度生成个性化推荐。</p>
+    </div>
+    <a class="btn btn-outline-primary" href="{% url 'courses:list' %}">返回课程中心</a>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="section-card mb-4">
+            <h2 class="h5 mb-3">为你推荐</h2>
+            <div class="row g-3">
+                {% for course in recommended_courses %}
+                    <div class="col-md-6">
+                        <div class="course-card h-100">
+                            <h3 class="h5">{{ course.title }}</h3>
+                            <p class="small text-muted">{{ course.teacher.full_name }} · 热度 {{ course.heat_score }}</p>
+                            <p>{{ course.summary }}</p>
+                            <div class="mb-3">
+                                {% for tag in course.tags.all %}
+                                    <span class="chip">{{ tag.name }}</span>
+                                {% endfor %}
+                            </div>
+                            <a class="btn btn-sm btn-primary" href="{% url 'courses:detail' course.pk %}">查看课程</a>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="col-12"><p class="text-muted mb-0">当前推荐不足，可以先多浏览和收藏课程。</p></div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="section-card">
+            <h2 class="h5 mb-3">最近浏览</h2>
+            {% for course in recent_courses %}
+                <div class="list-item-row">
+                    <div>
+                        <div class="fw-semibold">{{ course.title }}</div>
+                        <div class="small text-muted">浏览热度 {{ course.heat_score }}</div>
+                    </div>
+                    <a class="btn btn-sm btn-outline-primary" href="{% url 'courses:detail' course.pk %}">再次查看</a>
+                </div>
+            {% empty %}
+                <p class="text-muted mb-0">暂无最近浏览记录。</p>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="section-card mb-4">
+            <h2 class="h5 mb-3">我的收藏</h2>
+            {% for course in favorite_courses %}
+                <div class="list-item-row">
+                    <div>
+                        <div class="fw-semibold">{{ course.title }}</div>
+                        <div class="small text-muted">{{ course.category.name|default:"未分类" }}</div>
+                    </div>
+                    <a href="{% url 'courses:detail' course.pk %}">查看</a>
+                </div>
+            {% empty %}
+                <p class="text-muted mb-0">暂未收藏课程。</p>
+            {% endfor %}
+        </div>
+        <div class="section-card mb-4">
+            <h2 class="h5 mb-3">热门课程榜</h2>
+            {% for course in hot_courses %}
+                <div class="list-item-row">
+                    <div>
+                        <div class="fw-semibold">{{ course.title }}</div>
+                        <div class="small text-muted">热度 {{ course.heat_score }}</div>
+                    </div>
+                    <span class="small text-muted">收藏 {{ course.favorite_count }}</span>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="section-card">
+            <h2 class="h5 mb-3">活跃课程榜</h2>
+            {% for course in active_courses %}
+                <div class="list-item-row">
+                    <div>
+                        <div class="fw-semibold">{{ course.title }}</div>
+                        <div class="small text-muted">讨论 {{ course.discussion_count }} · 提交 {{ course.submission_count }}</div>
+                    </div>
+                    <a href="{% url 'courses:detail' course.pk %}">查看</a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

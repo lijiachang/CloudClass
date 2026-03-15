@@ -3,12 +3,90 @@
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
-        <h1 class="h3 mb-1">课程中心</h1>
-        <p class="text-muted mb-0">浏览平台课程并加入学习。</p>
+        <h1 class="h3 mb-1">课程发现中心</h1>
+        <p class="text-muted mb-0">支持分类、标签、关键词检索，并展示热门与推荐课程。</p>
     </div>
     {% if user.is_authenticated and user.is_teacher %}
         <a class="btn btn-primary" href="{% url 'courses:teacher_create' %}">创建课程</a>
     {% endif %}
+</div>
+
+<div class="section-card mb-4">
+    <form method="get" class="row g-3">
+        <div class="col-md-4">
+            <label for="q">关键词</label>
+            <input id="q" type="text" name="q" value="{{ keyword }}" placeholder="搜索课程名称">
+        </div>
+        <div class="col-md-4">
+            <label for="category">分类</label>
+            <select id="category" name="category">
+                <option value="">全部分类</option>
+                {% for category in categories %}
+                    <option value="{{ category.id }}" {% if active_category == category.id|stringformat:"s" %}selected{% endif %}>{{ category.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label for="tag">标签</label>
+            <select id="tag" name="tag">
+                <option value="">全部标签</option>
+                {% for tag in tags %}
+                    <option value="{{ tag.id }}" {% if active_tag == tag.id|stringformat:"s" %}selected{% endif %}>{{ tag.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-12 d-flex gap-2">
+            <button class="btn btn-primary" type="submit">筛选课程</button>
+            <a class="btn btn-outline-secondary" href="{% url 'courses:list' %}">重置</a>
+        </div>
+    </form>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-lg-4">
+        <div class="section-card h-100">
+            <h2 class="h5 mb-3">热门榜单</h2>
+            {% for course in hot_courses %}
+                <div class="list-item-row">
+                    <div>
+                        <div class="fw-semibold">{{ course.title }}</div>
+                        <div class="small text-muted">热度 {{ course.heat_score }}</div>
+                    </div>
+                    <a href="{% url 'courses:detail' course.pk %}">查看</a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="section-card h-100">
+            <h2 class="h5 mb-3">最新课程</h2>
+            {% for course in latest_courses %}
+                <div class="list-item-row">
+                    <div>
+                        <div class="fw-semibold">{{ course.title }}</div>
+                        <div class="small text-muted">{{ course.category.name|default:"未分类" }}</div>
+                    </div>
+                    <a href="{% url 'courses:detail' course.pk %}">查看</a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="section-card h-100">
+            <h2 class="h5 mb-3">推荐课程</h2>
+            {% for course in recommended_courses %}
+                <div class="list-item-row">
+                    <div>
+                        <div class="fw-semibold">{{ course.title }}</div>
+                        <div class="small text-muted">按学习行为与热度生成</div>
+                    </div>
+                    <a href="{% url 'courses:detail' course.pk %}">查看</a>
+                </div>
+            {% empty %}
+                <p class="text-muted mb-0">暂无推荐结果。</p>
+            {% endfor %}
+        </div>
+    </div>
 </div>
 
 <div class="row g-4">
@@ -18,8 +96,13 @@
                 <h2 class="h5">{{ course.title }}</h2>
                 <p class="small text-muted">教师：{{ course.teacher.full_name }}</p>
                 <p>{{ course.summary }}</p>
+                <div class="mb-3">
+                    {% for tag in course.tags.all %}
+                        <span class="chip">{{ tag.name }}</span>
+                    {% endfor %}
+                </div>
                 <div class="d-flex justify-content-between align-items-center">
-                    <span class="small text-muted">{{ course.category.name|default:"未分类" }}</span>
+                    <span class="small text-muted">{{ course.category.name|default:"未分类" }} · 热度 {{ course.heat_score }}</span>
                     <a class="btn btn-sm btn-primary" href="{% url 'courses:detail' course.pk %}">查看详情</a>
                 </div>
             </div>

@@ -12,6 +12,8 @@
         <div class="col-md-3"><div class="stat-card"><span>资料数</span><strong>{{ stats.material_count }}</strong></div></div>
         <div class="col-md-3"><div class="stat-card"><span>讨论帖</span><strong>{{ stats.discussion_count }}</strong></div></div>
         <div class="col-md-3"><div class="stat-card"><span>提交率</span><strong>{{ stats.submission_rate }}%</strong></div></div>
+        <div class="col-md-6"><div class="stat-card"><span>浏览量</span><strong>{{ stats.view_count }}</strong></div></div>
+        <div class="col-md-6"><div class="stat-card"><span>收藏量</span><strong>{{ stats.favorite_count }}</strong></div></div>
     </div>
     <canvas id="analyticsChart" height="120"></canvas>
 </div>
@@ -21,11 +23,11 @@
 new Chart(document.getElementById('analyticsChart'), {
     type: 'bar',
     data: {
-        labels: ['学生数', '资料数', '讨论帖', '平均分'],
+        labels: ['学生数', '资料数', '讨论帖', '平均分', '浏览量', '收藏量'],
         datasets: [{
             label: '课程统计',
-            data: [{{ stats.student_count }}, {{ stats.material_count }}, {{ stats.discussion_count }}, {{ stats.average_score|floatformat:1 }}],
-            backgroundColor: ['#1d4ed8', '#0f766e', '#d97706', '#9333ea']
+            data: [{{ stats.student_count }}, {{ stats.material_count }}, {{ stats.discussion_count }}, {{ stats.average_score|floatformat:1 }}, {{ stats.view_count }}, {{ stats.favorite_count }}],
+            backgroundColor: ['#1d4ed8', '#0f766e', '#d97706', '#9333ea', '#e11d48', '#0f766e']
         }]
     },
     options: {responsive: true, plugins: {legend: {display: false}}}

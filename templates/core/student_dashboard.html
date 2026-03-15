@@ -12,10 +12,29 @@
     <div class="col-md-4"><div class="stat-card"><span>已加入课程</span><strong>{{ stats.course_count }}</strong></div></div>
     <div class="col-md-4"><div class="stat-card"><span>已提交作业</span><strong>{{ stats.submission_count }}</strong></div></div>
     <div class="col-md-4"><div class="stat-card"><span>平均成绩</span><strong>{{ stats.average_score|floatformat:1 }}</strong></div></div>
+    <div class="col-md-6"><div class="stat-card"><span>收藏课程</span><strong>{{ stats.favorite_count }}</strong></div></div>
+    <div class="col-md-6"><div class="stat-card"><span>浏览次数</span><strong>{{ stats.view_count }}</strong></div></div>
 </div>
 
 <div class="row g-4">
     <div class="col-lg-7">
+        <div class="section-card mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="h5 mb-0">为你推荐</h2>
+                <a href="{% url 'courses:recommendations' %}">进入推荐中心</a>
+            </div>
+            {% for course in recommended_courses %}
+                <div class="list-item-row">
+                    <div>
+                        <div class="fw-semibold">{{ course.title }}</div>
+                        <div class="small text-muted">热度 {{ course.heat_score }} · 收藏 {{ course.favorite_count }}</div>
+                    </div>
+                    <a class="btn btn-sm btn-primary" href="{% url 'courses:detail' course.pk %}">查看</a>
+                </div>
+            {% empty %}
+                <p class="text-muted mb-0">多浏览和收藏课程后，这里会越来越准确。</p>
+            {% endfor %}
+        </div>
         <div class="section-card mb-4">
             <h2 class="h5 mb-3">我的课程</h2>
             {% for enrollment in enrollments %}
@@ -46,6 +65,34 @@
         </div>
     </div>
     <div class="col-lg-5">
+        <div class="section-card mb-4">
+            <h2 class="h5 mb-3">我的收藏</h2>
+            {% for course in favorite_courses %}
+                <div class="list-item-row">
+                    <div>
+                        <div class="fw-semibold">{{ course.title }}</div>
+                        <div class="small text-muted">{{ course.category.name|default:"未分类" }}</div>
+                    </div>
+                    <a class="btn btn-sm btn-outline-primary" href="{% url 'courses:detail' course.pk %}">进入</a>
+                </div>
+            {% empty %}
+                <p class="text-muted mb-0">暂未收藏课程。</p>
+            {% endfor %}
+        </div>
+        <div class="section-card mb-4">
+            <h2 class="h5 mb-3">最近浏览</h2>
+            {% for course in recent_courses %}
+                <div class="list-item-row">
+                    <div>
+                        <div class="fw-semibold">{{ course.title }}</div>
+                        <div class="small text-muted">热度 {{ course.heat_score }}</div>
+                    </div>
+                    <a class="btn btn-sm btn-outline-secondary" href="{% url 'courses:detail' course.pk %}">查看</a>
+                </div>
+            {% empty %}
+                <p class="text-muted mb-0">最近还没有浏览记录。</p>
+            {% endfor %}
+        </div>
         <div class="section-card mb-4">
             <h2 class="h5 mb-3">最近成绩</h2>
             {% for submission in submissions %}

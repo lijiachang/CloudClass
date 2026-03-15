@@ -15,8 +15,10 @@
     <div class="col-md-2"><div class="stat-card"><span>用户</span><strong>{{ stats.user_count }}</strong></div></div>
     <div class="col-md-2"><div class="stat-card"><span>课程</span><strong>{{ stats.course_count }}</strong></div></div>
     <div class="col-md-2"><div class="stat-card"><span>资料</span><strong>{{ stats.material_count }}</strong></div></div>
-    <div class="col-md-3"><div class="stat-card"><span>作业</span><strong>{{ stats.assignment_count }}</strong></div></div>
-    <div class="col-md-3"><div class="stat-card"><span>讨论</span><strong>{{ stats.discussion_count }}</strong></div></div>
+    <div class="col-md-2"><div class="stat-card"><span>作业</span><strong>{{ stats.assignment_count }}</strong></div></div>
+    <div class="col-md-2"><div class="stat-card"><span>讨论</span><strong>{{ stats.discussion_count }}</strong></div></div>
+    <div class="col-md-2"><div class="stat-card"><span>标签</span><strong>{{ stats.tag_count }}</strong></div></div>
+    <div class="col-md-4"><div class="stat-card"><span>活跃学生</span><strong>{{ stats.active_student_count }}</strong></div></div>
 </div>
 
 <div class="row g-4">
@@ -53,6 +55,38 @@
                 </div>
             {% empty %}
                 <p class="text-muted mb-0">暂无 Banner。</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mt-1">
+    <div class="col-lg-6">
+        <div class="section-card">
+            <h2 class="h5 mb-3">热门课程 Top</h2>
+            {% for course in hot_courses %}
+                <div class="list-item-row">
+                    <div>
+                        <div class="fw-semibold">{{ course.title }}</div>
+                        <div class="small text-muted">热度 {{ course.heat_score }} · 收藏 {{ course.favorite_count }}</div>
+                    </div>
+                    <span class="small text-muted">浏览 {{ course.view_count }}</span>
+                </div>
+            {% empty %}
+                <p class="text-muted mb-0">暂无课程数据。</p>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="section-card">
+            <h2 class="h5 mb-3">标签分布</h2>
+            {% for tag in popular_tags %}
+                <div class="list-item-row">
+                    <div class="fw-semibold">{{ tag.name }}</div>
+                    <span class="badge text-bg-primary">{{ tag.course_total }} 门课程</span>
+                </div>
+            {% empty %}
+                <p class="text-muted mb-0">暂无标签。</p>
             {% endfor %}
         </div>
     </div>

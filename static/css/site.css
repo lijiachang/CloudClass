@@ -85,6 +85,22 @@ body {
     margin-bottom: 1rem;
 }
 
+.chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.3rem 0.7rem;
+    border-radius: 999px;
+    background: rgba(31, 75, 153, 0.08);
+    color: var(--primary);
+    font-size: 0.82rem;
+    margin-right: 0.35rem;
+    margin-bottom: 0.35rem;
+}
+
+.chip-link {
+    text-decoration: none;
+}
+
 form p {
     margin-bottom: 1rem;
 }

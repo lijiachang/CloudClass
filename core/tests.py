@@ -5,12 +5,13 @@ from django.utils import timezone
 from accounts.models import User
 from assignments.models import Assignment
 from core.models import Announcement
-from courses.models import Course, CourseCategory, CourseEnrollment
+from courses.models import Course, CourseCategory, CourseEnrollment, CourseTag
 
 
 class PlatformFlowTests(TestCase):
     def setUp(self):
         self.category = CourseCategory.objects.create(name="测试分类")
+        self.tag = CourseTag.objects.create(name="推荐标签")
         self.teacher = User.objects.create_user(
             username="teacher",
             password="pass123456",
@@ -37,6 +38,7 @@ class PlatformFlowTests(TestCase):
             description="课程详情",
             status=Course.Status.PUBLISHED,
         )
+        self.course.tags.add(self.tag)
         self.assignment = Assignment.objects.create(
             course=self.course,
             created_by=self.teacher,
@@ -50,6 +52,7 @@ class PlatformFlowTests(TestCase):
         response = self.client.get(reverse("core:home"))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "CloudClass")
+        self.assertContains(response, "热门课程")
 
     def test_student_dashboard_redirect(self):
         self.client.login(username="student", password="pass123456")
@@ -66,3 +69,9 @@ class PlatformFlowTests(TestCase):
         self.client.login(username="student", password="pass123456")
         response = self.client.get(reverse("core:admin_dashboard"))
         self.assertEqual(response.status_code, 403)
+
+    def test_recommendation_center_requires_student(self):
+        self.client.login(username="student", password="pass123456")
+        response = self.client.get(reverse("courses:recommendations"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "推荐中心")

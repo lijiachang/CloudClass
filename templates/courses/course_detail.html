@@ -6,11 +6,24 @@
         <div>
             <h1 class="h3 mb-2">{{ course.title }}</h1>
             <p class="text-muted mb-2">教师：{{ course.teacher.full_name }} | 分类：{{ course.category.name|default:"未分类" }}</p>
+            <div class="mb-2">
+                {% for tag in course.tags.all %}
+                    <span class="chip">{{ tag.name }}</span>
+                {% empty %}
+                    <span class="small text-muted">暂未设置标签</span>
+                {% endfor %}
+            </div>
+            <p class="small text-muted">浏览 {{ view_count }} · 收藏 {{ favorite_count }}</p>
             <p class="mb-0">{{ course.description|default:course.summary }}</p>
         </div>
         <div class="d-flex gap-2 align-items-start">
             {% if user.is_authenticated and user.is_student and not is_enrolled %}
                 <a class="btn btn-primary" href="{% url 'courses:enroll' course.pk %}">加入课程</a>
+            {% endif %}
+            {% if user.is_authenticated and user.is_student %}
+                <a class="btn btn-outline-dark" href="{% url 'courses:favorite' course.pk %}">
+                    {% if is_favorite %}取消收藏{% else %}收藏课程{% endif %}
+                </a>
             {% endif %}
             {% if user.is_authenticated and user == course.teacher %}
                 <a class="btn btn-outline-primary" href="{% url 'resources:create' %}">上传资料</a>
@@ -81,6 +94,20 @@
                 </div>
             {% empty %}
                 <p class="text-muted mb-0">暂无作业。</p>
+            {% endfor %}
+        </div>
+        <div class="section-card mt-4">
+            <h2 class="h5 mb-3">相关推荐</h2>
+            {% for related in related_courses %}
+                <div class="list-item-row">
+                    <div>
+                        <div class="fw-semibold">{{ related.title }}</div>
+                        <div class="small text-muted">热度 {{ related.heat_score }} · {{ related.category.name|default:"未分类" }}</div>
+                    </div>
+                    <a class="btn btn-sm btn-outline-primary" href="{% url 'courses:detail' related.pk %}">查看</a>
+                </div>
+            {% empty %}
+                <p class="text-muted mb-0">暂无相关推荐。</p>
             {% endfor %}
         </div>
     </div>

@@ -59,6 +59,13 @@ class PlatformFlowTests(TestCase):
         response = self.client.get(reverse("core:dashboard"))
         self.assertRedirects(response, reverse("core:student_dashboard"))
 
+    def test_student_dashboard_renders_after_enrollment(self):
+        CourseEnrollment.objects.create(course=self.course, student=self.student)
+        self.client.login(username="student", password="pass123456")
+        response = self.client.get(reverse("core:student_dashboard"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "测试课程")
+
     def test_student_can_enroll_course(self):
         self.client.login(username="student", password="pass123456")
         response = self.client.get(reverse("courses:enroll", args=[self.course.pk]))

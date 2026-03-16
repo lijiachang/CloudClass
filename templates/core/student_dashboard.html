@@ -37,13 +37,13 @@
         </div>
         <div class="section-card mb-4">
             <h2 class="h5 mb-3">我的课程</h2>
-            {% for enrollment in enrollments %}
+            {% for course in enrollments %}
                 <div class="list-item-row">
                     <div>
-                        <div class="fw-semibold">{{ enrollment.course.title }}</div>
-                        <div class="small text-muted">教师：{{ enrollment.course.teacher.full_name }}</div>
+                        <div class="fw-semibold">{{ course.title }}</div>
+                        <div class="small text-muted">教师：{{ course.teacher.full_name }}</div>
                     </div>
-                    <a class="btn btn-sm btn-outline-primary" href="{% url 'courses:detail' enrollment.course.pk %}">进入</a>
+                    <a class="btn btn-sm btn-outline-primary" href="{% url 'courses:detail' course.pk %}">进入</a>
                 </div>
             {% empty %}
                 <p class="text-muted mb-0">你还没有加入课程。</p>

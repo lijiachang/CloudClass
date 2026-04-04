@@ -6,6 +6,7 @@ from django.shortcuts import redirect, render
 from accounts.decorators import admin_required, student_required, teacher_required
 from accounts.models import User
 from assignments.models import Assignment, AssignmentSubmission
+from attendance.models import AttendanceSession
 from courses.models import Course, CourseFavorite, CourseTag, CourseViewLog
 from courses.services import (
     get_active_courses,
@@ -17,6 +18,7 @@ from courses.services import (
     with_course_metrics,
 )
 from discussions.models import DiscussionPost
+from groups.models import CourseGroup
 from resources.models import CourseMaterial
 
 from .forms import AnnouncementForm, BannerForm
@@ -87,6 +89,8 @@ def teacher_dashboard(request):
         "discussion_count": DiscussionPost.objects.filter(course__teacher=request.user).count(),
         "view_count": CourseViewLog.objects.filter(course__teacher=request.user).count(),
         "favorite_count": CourseFavorite.objects.filter(course__teacher=request.user).count(),
+        "attendance_count": AttendanceSession.objects.filter(created_by=request.user).count(),
+        "group_count": CourseGroup.objects.filter(created_by=request.user).count(),
     }
     return render(
         request,

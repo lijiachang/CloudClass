@@ -5,9 +5,11 @@ from django.utils import timezone
 
 from accounts.models import User
 from assignments.models import Assignment, AssignmentSubmission
+from attendance.models import AttendanceRecord, AttendanceSession
 from core.models import Announcement, Banner
 from courses.models import Course, CourseCategory, CourseEnrollment, CourseFavorite, CourseTag, CourseViewLog
 from discussions.models import DiscussionComment, DiscussionPost
+from groups.models import CourseGroup, CourseGroupMember
 from resources.models import CourseMaterial
 
 
@@ -127,8 +129,9 @@ class Command(BaseCommand):
                 title=f"{title} 学习视频",
                 defaults={
                     "material_type": CourseMaterial.MaterialTypes.LINK,
-                    "description": f"{title} 的配套外部视频链接。",
-                    "external_url": "https://docs.djangoproject.com/zh-hans/4.2/",
+                    "description": f"{title} 的站内学习导览。",
+                    "content": f"这里整理了 {title} 的教学视频说明、重点知识和案例操作步骤。",
+                    "external_url": "https://www.example.com/cloudclass-material-reference",
                 },
             )
 
@@ -146,7 +149,10 @@ class Command(BaseCommand):
                 course=course,
                 author=students[index % len(students)],
                 title=f"{title} 学习交流帖",
-                defaults={"content": f"欢迎在这里讨论 {title} 的重点、难点和作业思路。"},
+                defaults={
+                    "content": f"欢迎在这里讨论 {title} 的重点、难点和作业思路。",
+                    "post_type": DiscussionPost.PostTypes.CLASSROOM,
+                },
             )
             DiscussionComment.objects.get_or_create(
                 post=post,
@@ -171,6 +177,25 @@ class Command(BaseCommand):
                 if submission.reviewed_at is None:
                     submission.reviewed_at = timezone.now() - timedelta(days=index % 3)
                     submission.save(update_fields=["reviewed_at"])
+
+            group, _ = CourseGroup.objects.get_or_create(
+                course=course,
+                name="第一学习小组",
+                defaults={"description": f"{title} 的示例分组。", "created_by": teachers[teacher_index]},
+            )
+            for student in students[:2]:
+                CourseGroupMember.objects.get_or_create(group=group, student=student)
+
+            session, _ = AttendanceSession.objects.get_or_create(
+                course=course,
+                title=f"{title} 第一讲签到",
+                defaults={
+                    "description": "演示环境初始化签到记录。",
+                    "created_by": teachers[teacher_index],
+                },
+            )
+            for student in students[:2]:
+                AttendanceRecord.objects.get_or_create(session=session, student=student)
 
         target_student = students[0]
         for course in courses[:4]:

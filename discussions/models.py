@@ -5,8 +5,14 @@ from courses.models import Course
 
 
 class DiscussionPost(models.Model):
+    class PostTypes(models.TextChoices):
+        GENERAL = "general", "普通讨论"
+        CLASSROOM = "classroom", "课堂讨论"
+        GROUP = "group", "分组讨论"
+
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="posts", verbose_name="所属课程")
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="discussion_posts", verbose_name="作者")
+    post_type = models.CharField("讨论类型", max_length=20, choices=PostTypes.choices, default=PostTypes.GENERAL)
     title = models.CharField("帖子标题", max_length=200)
     content = models.TextField("帖子内容")
     is_pinned = models.BooleanField("是否置顶", default=False)

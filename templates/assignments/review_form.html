@@ -1,2 +1,33 @@
-{% extends "common/form.html" %}
+{% extends "base.html" %}
 {% block title %}批改作业{% endblock %}
+{% block content %}
+<div class="row g-4">
+    <div class="col-lg-5">
+        <div class="section-card">
+            <h1 class="h4 mb-3">提交信息</h1>
+            <p class="mb-2"><strong>学生：</strong>{{ submission.student.full_name }}</p>
+            <p class="mb-2"><strong>提交时间：</strong>{{ submission.submitted_at|date:"Y-m-d H:i" }}</p>
+            <p class="mb-2"><strong>提交说明：</strong></p>
+            <div class="bg-light rounded p-3 mb-3" style="white-space: pre-wrap;">{{ submission.content|default:"未填写提交说明" }}</div>
+            <p class="mb-2"><strong>提交附件：</strong>
+                {% if submission.attachment %}
+                    <a href="{{ submission.attachment.url }}">下载附件</a>
+                {% else %}
+                    无附件
+                {% endif %}
+            </p>
+            <p class="mb-0"><strong>AI 辅助批阅：</strong><a href="{% url 'ai_assistant:review_suggestion' submission.pk %}">生成建议分数与评语</a></p>
+        </div>
+    </div>
+    <div class="col-lg-7">
+        <div class="section-card">
+            <h2 class="h4 mb-4">{{ title }}</h2>
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-primary">保存批改</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

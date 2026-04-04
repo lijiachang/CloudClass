@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}签到详情{% endblock %}
+{% block content %}
+<div class="section-card mb-4">
+    <h1 class="h4 mb-2">{{ session.title }}</h1>
+    <p class="text-muted mb-1">{{ session.course.title }} · {{ session.get_status_display }}</p>
+    <p class="mb-0">应到 {{ total_count }} 人，已到 {{ signed_count }} 人，未到 {{ absentees|length }} 人</p>
+</div>
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="section-card">
+            <h2 class="h5 mb-3">已签到学生</h2>
+            {% for item in attendees %}
+                <div class="list-item-row">
+                    <div>{{ item.student.full_name }}</div>
+                    <span class="badge text-bg-success">已签到</span>
+                </div>
+            {% empty %}
+                <p class="text-muted mb-0">暂无签到记录。</p>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="section-card">
+            <h2 class="h5 mb-3">未签到学生</h2>
+            {% for item in absentees %}
+                <div class="list-item-row">
+                    <div>{{ item.student.full_name }}</div>
+                    <span class="badge text-bg-secondary">未签到</span>
+                </div>
+            {% empty %}
+                <p class="text-muted mb-0">所有学生均已签到。</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

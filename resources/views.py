@@ -25,3 +25,8 @@ def material_manage(request, course_id):
     course = get_object_or_404(Course, pk=course_id, teacher=request.user)
     materials = CourseMaterial.objects.filter(course=course)
     return render(request, "resources/material_manage.html", {"course": course, "materials": materials})
+
+
+def material_detail(request, pk):
+    material = get_object_or_404(CourseMaterial.objects.select_related("course", "uploaded_by"), pk=pk)
+    return render(request, "resources/material_detail.html", {"material": material})

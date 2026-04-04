@@ -40,10 +40,9 @@ class AssignmentSubmissionForm(forms.ModelForm):
 
 
 class ReviewForm(forms.ModelForm):
+    score = forms.DecimalField(label="得分", max_digits=5, decimal_places=2, required=False)
+    feedback = forms.CharField(label="教师评语", required=False, widget=forms.Textarea(attrs={"rows": 5}))
+
     class Meta:
         model = AssignmentSubmission
         fields = ("score", "feedback")
-        labels = {
-            "score": "得分",
-            "feedback": "教师评语",
-        }

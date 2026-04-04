@@ -26,6 +26,7 @@
                 </a>
             {% endif %}
             {% if user.is_authenticated and user == course.teacher %}
+                <a class="btn btn-outline-dark" href="{% url 'ai_assistant:center' %}">AI 助手</a>
                 <a class="btn btn-outline-primary" href="{% url 'resources:create' %}">上传资料</a>
                 <a class="btn btn-outline-secondary" href="{% url 'assignments:create' %}">发布作业</a>
             {% endif %}
@@ -46,11 +47,7 @@
                 <div class="mb-3">
                     <div class="fw-semibold">{{ material.title }}</div>
                     <div class="small text-muted">{{ material.get_material_type_display }}</div>
-                    {% if material.file %}
-                        <a href="{{ material.file.url }}">下载文件</a>
-                    {% elif material.external_url %}
-                        <a href="{{ material.external_url }}" target="_blank">打开链接</a>
-                    {% endif %}
+                    <a href="{% url 'resources:detail' material.pk %}">查看资料详情</a>
                 </div>
             {% empty %}
                 <p class="text-muted mb-0">暂无资料。</p>
@@ -65,6 +62,7 @@
                 <div class="mb-3">
                     <div class="fw-semibold">
                         {% if post.is_pinned %}<span class="badge text-bg-warning">置顶</span>{% endif %}
+                        <span class="badge text-bg-light">{{ post.get_post_type_display }}</span>
                         <a href="{% url 'discussions:detail' post.pk %}">{{ post.title }}</a>
                     </div>
                     <div class="small text-muted">{{ post.author.full_name }} · {{ post.created_at|date:"Y-m-d H:i" }}</div>
@@ -94,6 +92,59 @@
                 </div>
             {% empty %}
                 <p class="text-muted mb-0">暂无作业。</p>
+            {% endfor %}
+        </div>
+        <div class="section-card mt-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="h5 mb-0">课堂签到</h2>
+                {% if user.is_authenticated and user == course.teacher %}
+                    <a href="{% url 'attendance:session_create' %}">发起签到</a>
+                {% endif %}
+            </div>
+            {% for session in attendance_sessions %}
+                <div class="list-item-row">
+                    <div>
+                        <div class="fw-semibold">{{ session.title }}</div>
+                        <div class="small text-muted">{{ session.get_status_display }} · {{ session.created_at|date:"Y-m-d H:i" }}</div>
+                    </div>
+                    <div class="d-flex gap-2">
+                        {% if user.is_authenticated and user == course.teacher %}
+                            <a href="{% url 'attendance:session_detail' session.pk %}">查看签到</a>
+                        {% elif user.is_authenticated and user.is_student and is_enrolled %}
+                            {% if session.pk in signed_session_ids %}
+                                <span class="badge text-bg-success">已签到</span>
+                            {% else %}
+                                <a class="btn btn-sm btn-primary" href="{% url 'attendance:sign_in' session.pk %}">立即签到</a>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            {% empty %}
+                <p class="text-muted mb-0">暂无签到活动。</p>
+            {% endfor %}
+        </div>
+        <div class="section-card mt-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="h5 mb-0">课程分组</h2>
+                {% if user.is_authenticated and user == course.teacher %}
+                    <a href="{% url 'groups:group_create' %}">创建小组</a>
+                {% endif %}
+            </div>
+            {% for group in groups %}
+                <div class="mb-3">
+                    <div class="fw-semibold">{{ group.name }}</div>
+                    <div class="small text-muted">{{ group.description|default:"暂无小组说明" }}</div>
+                    <div class="small text-muted mt-1">
+                        成员：
+                        {% for member in group.members.all %}
+                            {{ member.student.full_name }}{% if not forloop.last %}、{% endif %}
+                        {% empty %}
+                            暂无成员
+                        {% endfor %}
+                    </div>
+                </div>
+            {% empty %}
+                <p class="text-muted mb-0">暂无分组信息。</p>
             {% endfor %}
         </div>
         <div class="section-card mt-4">

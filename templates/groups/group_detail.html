@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}小组详情{% endblock %}
+{% block content %}
+<div class="row g-4">
+    <div class="col-lg-5">
+        <div class="section-card">
+            <h1 class="h4 mb-3">{{ group.name }}</h1>
+            <p class="text-muted">{{ group.course.title }}</p>
+            <p>{{ group.description|default:"暂无小组说明。" }}</p>
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-primary">添加成员</button>
+            </form>
+        </div>
+    </div>
+    <div class="col-lg-7">
+        <div class="section-card">
+            <h2 class="h5 mb-3">当前成员</h2>
+            {% for member in group.members.all %}
+                <div class="list-item-row">
+                    <div>{{ member.student.full_name }} <span class="small text-muted">{{ member.student.username }}</span></div>
+                    <a class="btn btn-sm btn-outline-danger" href="{% url 'groups:member_remove' member.pk %}">移除</a>
+                </div>
+            {% empty %}
+                <p class="text-muted mb-0">暂无成员。</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -8,14 +8,15 @@ from .models import CourseMaterial
 class CourseMaterialForm(forms.ModelForm):
     class Meta:
         model = CourseMaterial
-        fields = ("course", "title", "material_type", "description", "file", "external_url")
+        fields = ("course", "title", "material_type", "description", "content", "file", "external_url")
         labels = {
             "course": "所属课程",
             "title": "资料标题",
             "material_type": "资料类型",
             "description": "资料说明",
+            "content": "资料正文",
             "file": "上传文件",
-            "external_url": "外部链接",
+            "external_url": "参考链接",
         }
 
     def __init__(self, *args, teacher=None, **kwargs):

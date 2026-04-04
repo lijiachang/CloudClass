@@ -3,7 +3,7 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
         <h1 class="h3 mb-1">{{ course.title }} 资料管理</h1>
-        <p class="text-muted mb-0">维护课件、视频和外部学习链接。</p>
+        <p class="text-muted mb-0">维护课件、视频和站内资料详情页。</p>
     </div>
     <a class="btn btn-primary" href="{% url 'resources:create' %}">上传资料</a>
 </div>
@@ -14,11 +14,7 @@
                 <div class="fw-semibold">{{ material.title }}</div>
                 <div class="small text-muted">{{ material.get_material_type_display }} · {{ material.created_at|date:"Y-m-d H:i" }}</div>
             </div>
-            {% if material.file %}
-                <a href="{{ material.file.url }}">下载</a>
-            {% elif material.external_url %}
-                <a href="{{ material.external_url }}" target="_blank">查看</a>
-            {% endif %}
+            <a href="{% url 'resources:detail' material.pk %}">查看详情</a>
         </div>
     {% empty %}
         <p class="text-muted mb-0">暂无资料。</p>

@@ -23,6 +23,9 @@ INSTALLED_APPS = [
     "resources",
     "assignments",
     "discussions",
+    "ai_assistant",
+    "attendance",
+    "groups",
 ]
 
 MIDDLEWARE = [

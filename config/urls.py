@@ -11,6 +11,9 @@ urlpatterns = [
     path("resources/", include("resources.urls")),
     path("assignments/", include("assignments.urls")),
     path("discussions/", include("discussions.urls")),
+    path("ai/", include("ai_assistant.urls")),
+    path("attendance/", include("attendance.urls")),
+    path("groups/", include("groups.urls")),
 ]
 
 if settings.DEBUG:

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}{{ material.title }}{% endblock %}
+{% block content %}
+<div class="section-card">
+    <div class="d-flex justify-content-between gap-3 mb-3">
+        <div>
+            <h1 class="h3 mb-1">{{ material.title }}</h1>
+            <p class="text-muted mb-0">{{ material.course.title }} · {{ material.get_material_type_display }} · {{ material.created_at|date:"Y-m-d H:i" }}</p>
+        </div>
+        <a class="btn btn-outline-secondary" href="{% url 'courses:detail' material.course.pk %}">返回课程</a>
+    </div>
+    <p>{{ material.description|default:"暂无资料说明。" }}</p>
+    {% if material.content %}
+        <div class="bg-light rounded p-3 mb-3" style="white-space: pre-wrap;">{{ material.content }}</div>
+    {% endif %}
+    <div class="d-flex gap-2 flex-wrap">
+        {% if material.file %}
+            <a class="btn btn-primary" href="{{ material.file.url }}">下载文件</a>
+        {% endif %}
+        {% if material.external_url %}
+            <a class="btn btn-outline-primary" href="{{ material.external_url }}" target="_blank">打开参考链接</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,12 +1,19 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="section-card">
-    <h1 class="h4 mb-3">{{ assignment.title }} 提交列表</h1>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="h4 mb-0">{{ assignment.title }} 提交列表</h1>
+        <div class="d-flex gap-2">
+            <a class="btn btn-sm btn-outline-dark" href="{% url 'ai_assistant:center' %}">AI 助手</a>
+            <a class="btn btn-sm btn-outline-primary" href="{% url 'assignments:export_scores' assignment.pk %}">导出成绩 CSV</a>
+        </div>
+    </div>
     {% for submission in submissions %}
         <div class="list-item-row">
             <div>
                 <div class="fw-semibold">{{ submission.student.full_name }}</div>
                 <div class="small text-muted">提交时间：{{ submission.submitted_at|date:"Y-m-d H:i" }}</div>
+                <div class="small text-muted">附件：{% if submission.attachment %}有附件{% else %}无附件{% endif %} · 批改：{% if submission.reviewed_at %}已批改{% else %}待批改{% endif %}</div>
             </div>
             <div class="d-flex gap-2 align-items-center">
                 <span class="badge text-bg-secondary">{{ submission.score|default:"待批改" }}</span>

@@ -1,3 +1,6 @@
+import csv
+
+from django.http import HttpResponse
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
@@ -69,3 +72,27 @@ def assignment_review(request, submission_id):
         "assignments/review_form.html",
         {"form": form, "submission": submission, "title": f"批改作业：{submission.assignment.title}"},
     )
+
+
+@teacher_required
+def export_scores(request, pk):
+    assignment = get_object_or_404(Assignment, pk=pk, created_by=request.user)
+    submissions = assignment.submissions.select_related("student").order_by("student__username")
+    response = HttpResponse(content_type="text/csv; charset=utf-8-sig")
+    response["Content-Disposition"] = f'attachment; filename="{assignment.title}-scores.csv"'
+    writer = csv.writer(response)
+    writer.writerow(["学生姓名", "学号/工号", "用户名", "提交时间", "附件状态", "分数", "教师评语", "批改时间"])
+    for submission in submissions:
+        writer.writerow(
+            [
+                submission.student.full_name,
+                submission.student.school_id,
+                submission.student.username,
+                timezone.localtime(submission.submitted_at).strftime("%Y-%m-%d %H:%M"),
+                "有附件" if submission.attachment else "无附件",
+                submission.score or "",
+                submission.feedback,
+                timezone.localtime(submission.reviewed_at).strftime("%Y-%m-%d %H:%M") if submission.reviewed_at else "",
+            ]
+        )
+    return response

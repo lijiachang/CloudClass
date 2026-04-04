@@ -8,6 +8,7 @@
     <div class="d-flex gap-2">
         <a class="btn btn-primary" href="{% url 'courses:teacher_create' %}">创建课程</a>
         <a class="btn btn-outline-primary" href="{% url 'assignments:create' %}">发布作业</a>
+        <a class="btn btn-outline-dark" href="{% url 'ai_assistant:center' %}">AI 助手</a>
     </div>
 </div>
 
@@ -15,8 +16,17 @@
     <div class="col-md-4"><div class="stat-card"><span>课程数</span><strong>{{ stats.course_count }}</strong></div></div>
     <div class="col-md-4"><div class="stat-card"><span>资料数</span><strong>{{ stats.material_count }}</strong></div></div>
     <div class="col-md-4"><div class="stat-card"><span>讨论帖数</span><strong>{{ stats.discussion_count }}</strong></div></div>
-    <div class="col-md-6"><div class="stat-card"><span>课程浏览量</span><strong>{{ stats.view_count }}</strong></div></div>
-    <div class="col-md-6"><div class="stat-card"><span>课程收藏量</span><strong>{{ stats.favorite_count }}</strong></div></div>
+    <div class="col-md-3"><div class="stat-card"><span>课程浏览量</span><strong>{{ stats.view_count }}</strong></div></div>
+    <div class="col-md-3"><div class="stat-card"><span>课程收藏量</span><strong>{{ stats.favorite_count }}</strong></div></div>
+    <div class="col-md-3"><div class="stat-card"><span>签到数</span><strong>{{ stats.attendance_count }}</strong></div></div>
+    <div class="col-md-3"><div class="stat-card"><span>分组数</span><strong>{{ stats.group_count }}</strong></div></div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-3"><a class="section-card d-block text-decoration-none" href="{% url 'ai_assistant:center' %}"><strong>AI 助手</strong><div class="small text-muted mt-2">备课、授课、评价、查重</div></a></div>
+    <div class="col-md-3"><a class="section-card d-block text-decoration-none" href="{% url 'attendance:session_list' %}"><strong>签到管理</strong><div class="small text-muted mt-2">发起课堂签到与查看记录</div></a></div>
+    <div class="col-md-3"><a class="section-card d-block text-decoration-none" href="{% url 'groups:group_list' %}"><strong>分组管理</strong><div class="small text-muted mt-2">手动创建小组并分配学生</div></a></div>
+    <div class="col-md-3"><a class="section-card d-block text-decoration-none" href="{% url 'courses:teacher_list' %}"><strong>成绩导出</strong><div class="small text-muted mt-2">进入作业提交列表导出 CSV</div></a></div>
 </div>
 
 <div class="row g-4">

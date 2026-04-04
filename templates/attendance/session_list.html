@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}签到管理{% endblock %}
+{% block content %}
+<div class="section-card">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="h4 mb-0">签到管理</h1>
+        <a class="btn btn-primary" href="{% url 'attendance:session_create' %}">发起签到</a>
+    </div>
+    {% for session in sessions %}
+        <div class="list-item-row">
+            <div>
+                <div class="fw-semibold">{{ session.title }}</div>
+                <div class="small text-muted">{{ session.course.title }} · {{ session.get_status_display }} · 已签到 {{ session.signed_count }}</div>
+            </div>
+            <a class="btn btn-sm btn-outline-primary" href="{% url 'attendance:session_detail' session.pk %}">查看详情</a>
+        </div>
+    {% empty %}
+        <p class="text-muted mb-0">暂无签到活动。</p>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}AI 助手中心{% endblock %}
+{% block content %}
+<div class="row g-4">
+    <div class="col-lg-7">
+        <div class="section-card">
+            <h1 class="h3 mb-3">AI 助手中心</h1>
+            <p class="text-muted">支持 AI 备课、AI 授课、AI 评价、AI 辅助批阅、AI 查重。所有结果仅供教师参考。</p>
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-primary">生成建议</button>
+            </form>
+        </div>
+        {% if result %}
+            <div class="section-card mt-4">
+                <h2 class="h5 mb-3">AI 结果</h2>
+                <div class="alert alert-info">{{ result.notice }}</div>
+                <div style="white-space: pre-wrap;">{{ result.content }}</div>
+            </div>
+        {% endif %}
+        {% if plagiarism_result %}
+            <div class="section-card mt-4">
+                <h2 class="h5 mb-3">查重结果</h2>
+                <div class="alert alert-info">{{ plagiarism_result.notice }}</div>
+                <div style="white-space: pre-wrap;">{{ plagiarism_result.content }}</div>
+                {% if plagiarism_result.pairs %}
+                    <hr>
+                    {% for item in plagiarism_result.pairs %}
+                        <div class="mb-2">
+                            <strong>{{ item.left.student.full_name }}</strong> 与 <strong>{{ item.right.student.full_name }}</strong>
+                            <span class="text-muted">相似度 {{ item.ratio }}%</span>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+    <div class="col-lg-5">
+        <div class="section-card">
+            <h2 class="h5 mb-3">最近 AI 记录</h2>
+            {% for item in recent_logs %}
+                <div class="mb-3">
+                    <div class="fw-semibold">{{ item.get_mode_display }}</div>
+                    <div class="small text-muted">
+                        {{ item.course.title|default:"未关联课程" }}
+                        {% if item.assignment %} · {{ item.assignment.title }}{% endif %}
+                        · {{ item.created_at|date:"Y-m-d H:i" }}
+                    </div>
+                </div>
+            {% empty %}
+                <p class="text-muted mb-0">暂无 AI 记录。</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

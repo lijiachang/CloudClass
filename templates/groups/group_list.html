@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}分组管理{% endblock %}
+{% block content %}
+<div class="section-card">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="h4 mb-0">课程分组</h1>
+        <a class="btn btn-primary" href="{% url 'groups:group_create' %}">创建小组</a>
+    </div>
+    {% for group in groups %}
+        <div class="list-item-row">
+            <div>
+                <div class="fw-semibold">{{ group.name }}</div>
+                <div class="small text-muted">{{ group.course.title }} · 成员 {{ group.members.count }}</div>
+            </div>
+            <a class="btn btn-sm btn-outline-primary" href="{% url 'groups:group_detail' group.pk %}">管理成员</a>
+        </div>
+    {% empty %}
+        <p class="text-muted mb-0">暂无课程分组。</p>
+    {% endfor %}
+</div>
+{% endblock %}

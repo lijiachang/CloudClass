@@ -5,7 +5,9 @@ from django.shortcuts import get_object_or_404, redirect, render
 
 from accounts.decorators import student_required, teacher_required
 from assignments.models import AssignmentSubmission
+from attendance.models import AttendanceRecord, AttendanceSession
 from discussions.models import DiscussionPost
+from groups.models import CourseGroup
 from resources.models import CourseMaterial
 
 from .forms import CourseForm
@@ -82,9 +84,16 @@ def course_detail(request, pk):
         "materials": CourseMaterial.objects.filter(course=course),
         "assignments": course.assignments.all(),
         "posts": DiscussionPost.objects.filter(course=course).select_related("author")[:5],
+        "groups": CourseGroup.objects.filter(course=course).prefetch_related("members__student"),
+        "attendance_sessions": AttendanceSession.objects.filter(course=course)[:5],
         "related_courses": related_courses,
         "favorite_count": CourseFavorite.objects.filter(course=course).count(),
         "view_count": CourseViewLog.objects.filter(course=course).count(),
+        "signed_session_ids": set(
+            AttendanceRecord.objects.filter(session__course=course, student=request.user).values_list("session_id", flat=True)
+        )
+        if request.user.is_authenticated and request.user.is_student
+        else set(),
     }
     return render(request, "courses/course_detail.html", context)
 

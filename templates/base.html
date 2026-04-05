@@ -20,6 +20,7 @@
                 <li class="nav-item"><a class="nav-link" href="{% url 'courses:list' %}">课程中心</a></li>
                 {% if user.is_authenticated and user.is_student %}
                     <li class="nav-item"><a class="nav-link" href="{% url 'courses:recommendations' %}">推荐中心</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'ai_assistant:student_chat' %}">AI 聊天</a></li>
                 {% endif %}
                 {% if user.is_authenticated %}
                     <li class="nav-item"><a class="nav-link" href="{% url 'core:dashboard' %}">我的工作台</a></li>

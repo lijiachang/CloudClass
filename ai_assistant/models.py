@@ -48,3 +48,19 @@ class AIInteractionLog(models.Model):
     def __str__(self):
         return f"{self.get_mode_display()} - {self.teacher}"
 
+
+class StudentAIChatMessage(models.Model):
+    student = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="student_ai_messages", verbose_name="学生"
+    )
+    question = models.TextField("提问内容")
+    answer = models.TextField("AI 回复")
+    created_at = models.DateTimeField("创建时间", auto_now_add=True)
+
+    class Meta:
+        verbose_name = "学生 AI 聊天记录"
+        verbose_name_plural = "学生 AI 聊天记录"
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.student} - 学生AI聊天"

@@ -23,3 +23,14 @@ class TeacherAIAssistantForm(forms.Form):
             self.fields["course"].queryset = courses
             self.fields["assignment"].queryset = assignments
 
+
+class StudentAIChatForm(forms.Form):
+    question = forms.CharField(
+        label="想问 AI 的问题",
+        widget=forms.Textarea(
+            attrs={
+                "rows": 5,
+                "placeholder": "比如：请帮我总结一下这门课的重点，或者解释一个知识点。",
+            }
+        ),
+    )

@@ -1,11 +1,11 @@
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, render
 
-from accounts.decorators import teacher_required
-from assignments.models import Assignment, AssignmentSubmission
+from accounts.decorators import student_required, teacher_required
+from assignments.models import AssignmentSubmission
 
-from .forms import TeacherAIAssistantForm
-from .models import AIInteractionLog
+from .forms import StudentAIChatForm, TeacherAIAssistantForm
+from .models import AIInteractionLog, StudentAIChatMessage
 from .services import TeacherAIService
 
 
@@ -81,3 +81,18 @@ def generate_review_suggestion(request, submission_id):
         {"submission": submission, "result": result},
     )
 
+
+@student_required
+def student_chat(request):
+    result = None
+    form = StudentAIChatForm(request.POST or None)
+    if request.method == "POST" and form.is_valid():
+        question = form.cleaned_data["question"]
+        result = TeacherAIService.student_chat(question)
+        StudentAIChatMessage.objects.create(student=request.user, question=question, answer=result["content"])
+    chat_history = StudentAIChatMessage.objects.filter(student=request.user)[:10]
+    return render(
+        request,
+        "ai_assistant/student_chat.html",
+        {"form": form, "result": result, "chat_history": chat_history},
+    )

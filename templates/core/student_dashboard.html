@@ -5,7 +5,10 @@
         <h1 class="h3 mb-1">学生工作台</h1>
         <p class="text-muted mb-0">查看课程、作业和学习统计。</p>
     </div>
-    <a class="btn btn-outline-primary" href="{% url 'courses:list' %}">浏览课程</a>
+    <div class="d-flex gap-2">
+        <a class="btn btn-outline-dark" href="{% url 'ai_assistant:student_chat' %}">AI 聊天</a>
+        <a class="btn btn-outline-primary" href="{% url 'courses:list' %}">浏览课程</a>
+    </div>
 </div>
 
 <div class="row g-3 mb-4">
@@ -14,6 +17,16 @@
     <div class="col-md-4"><div class="stat-card"><span>平均成绩</span><strong>{{ stats.average_score|floatformat:1 }}</strong></div></div>
     <div class="col-md-6"><div class="stat-card"><span>收藏课程</span><strong>{{ stats.favorite_count }}</strong></div></div>
     <div class="col-md-6"><div class="stat-card"><span>浏览次数</span><strong>{{ stats.view_count }}</strong></div></div>
+</div>
+
+<div class="section-card mb-4">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h2 class="h5 mb-1">学生 AI 聊天</h2>
+            <p class="text-muted mb-0">可以让 AI 帮你总结知识点、解释概念、整理复习思路。</p>
+        </div>
+        <a class="btn btn-primary" href="{% url 'ai_assistant:student_chat' %}">进入聊天</a>
+    </div>
 </div>
 
 <div class="row g-4">

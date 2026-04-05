@@ -60,6 +60,59 @@ class TeacherAIService:
         return {"content": content, "notice": "结果由千问生成，仅供教师参考。"}
 
     @classmethod
+    def student_chat(cls, question):
+        api_key = os.getenv("DASHSCOPE_API_KEY", "").strip()
+        if not api_key:
+            return {
+                "content": (
+                    "这是学生 AI 聊天的本地演示回复。\n"
+                    "你可以继续追问课程重点、作业思路、知识点解释、复习建议等内容。\n"
+                    f"本次问题参考：{question.strip()[:180] or '未提供问题'}"
+                ),
+                "notice": "未检测到 DASHSCOPE_API_KEY，当前返回本地演示回复。",
+            }
+
+        payload = {
+            "model": os.getenv("DASHSCOPE_MODEL", cls.model),
+            "messages": [
+                {
+                    "role": "system",
+                    "content": "你是一名面向大学生的课程学习助手，请用通俗、友好的中文回答问题，帮助学生理解课程内容。",
+                },
+                {"role": "user", "content": question},
+            ],
+            "temperature": 0.6,
+        }
+        req = request.Request(
+            cls.api_url,
+            data=json.dumps(payload).encode("utf-8"),
+            headers={
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {api_key}",
+            },
+            method="POST",
+        )
+        try:
+            with request.urlopen(req, timeout=30) as resp:
+                data = json.loads(resp.read().decode("utf-8"))
+        except (error.URLError, TimeoutError, json.JSONDecodeError):
+            return {
+                "content": (
+                    "千问暂时不可用，当前返回本地演示回复。\n"
+                    "建议你从课程目标、知识点、作业要求这几个角度继续整理问题，再和老师确认。"
+                ),
+                "notice": "千问调用失败，当前返回本地演示回复。",
+            }
+
+        content = data.get("choices", [{}])[0].get("message", {}).get("content")
+        if not content:
+            return {
+                "content": "当前没有拿到有效回复，你可以换个问法再试一次。",
+                "notice": "千问暂未返回有效结果。",
+            }
+        return {"content": content, "notice": "结果由千问生成，仅供学习参考。"}
+
+    @classmethod
     def analyze_similarity(cls, assignment):
         submissions = list(
             AssignmentSubmission.objects.filter(assignment=assignment).select_related("student").order_by("student__username")
@@ -127,4 +180,3 @@ class TeacherAIService:
             ),
         }
         return {"content": templates[mode], "notice": notice}
-

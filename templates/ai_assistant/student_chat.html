@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}学生 AI 聊天{% endblock %}
+{% block content %}
+<div class="row g-4">
+    <div class="col-lg-7">
+        <div class="section-card">
+            <h1 class="h3 mb-3">学生 AI 聊天</h1>
+            <p class="text-muted">你可以提问课程知识点、复习思路、作业理解、学习建议等内容。</p>
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-primary">发送给 AI</button>
+            </form>
+        </div>
+        {% if result %}
+            <div class="section-card mt-4">
+                <h2 class="h5 mb-3">AI 回复</h2>
+                <div class="alert alert-info">{{ result.notice }}</div>
+                <div style="white-space: pre-wrap;">{{ result.content }}</div>
+            </div>
+        {% endif %}
+    </div>
+    <div class="col-lg-5">
+        <div class="section-card">
+            <h2 class="h5 mb-3">最近聊天记录</h2>
+            {% for item in chat_history %}
+                <div class="mb-3">
+                    <div class="fw-semibold">问：{{ item.question|truncatechars:60 }}</div>
+                    <div class="small text-muted mb-2">{{ item.created_at|date:"Y-m-d H:i" }}</div>
+                    <div class="small" style="white-space: pre-wrap;">{{ item.answer|truncatechars:180 }}</div>
+                </div>
+            {% empty %}
+                <p class="text-muted mb-0">还没有聊天记录，先试着问一个课程问题吧。</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

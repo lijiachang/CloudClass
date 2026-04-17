@@ -1,33 +1,85 @@
 {% extends "base.html" %}
 {% block title %}学生 AI 聊天{% endblock %}
 {% block content %}
+<div class="ai-chat-hero section-card mb-4">
+    <div class="row align-items-center g-4">
+        <div class="col-lg-8">
+            <h1 class="h3 mb-2">学生 AI 聊天</h1>
+            <p class="text-muted mb-0">可以把它当成一个学习搭子，用来问课程重点、概念解释、作业理解和复习建议。</p>
+        </div>
+        <div class="col-lg-4">
+            <div class="ai-chat-badges">
+                <span class="chip">知识点解释</span>
+                <span class="chip">复习建议</span>
+                <span class="chip">作业思路</span>
+                <span class="chip">学习规划</span>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="row g-4">
-    <div class="col-lg-7">
-        <div class="section-card">
-            <h1 class="h3 mb-3">学生 AI 聊天</h1>
-            <p class="text-muted">你可以提问课程知识点、复习思路、作业理解、学习建议等内容。</p>
-            <form method="post">
+    <div class="col-lg-8">
+        <div class="section-card ai-chat-panel">
+            <div class="ai-chat-header">
+                <h2 class="h5 mb-1">对话区</h2>
+                <p class="text-muted mb-0">输入一个问题，AI 会给你一段学习参考答案。</p>
+            </div>
+            {% if result %}
+                <div class="alert alert-info">{{ result.notice }}</div>
+            {% endif %}
+            <div class="ai-chat-thread mb-4">
+                {% if result %}
+                    <div class="chat-bubble chat-bubble-user">
+                        <div class="chat-role">我</div>
+                        <div style="white-space: pre-wrap;">{{ form.question.value }}</div>
+                    </div>
+                    <div class="chat-bubble chat-bubble-ai">
+                        <div class="chat-role">AI 学习助手</div>
+                        <div style="white-space: pre-wrap;">{{ result.content }}</div>
+                    </div>
+                {% elif chat_history %}
+                    {% with latest=chat_history|first %}
+                        <div class="chat-bubble chat-bubble-user">
+                            <div class="chat-role">我</div>
+                            <div style="white-space: pre-wrap;">{{ latest.question }}</div>
+                        </div>
+                        <div class="chat-bubble chat-bubble-ai">
+                            <div class="chat-role">AI 学习助手</div>
+                            <div style="white-space: pre-wrap;">{{ latest.answer }}</div>
+                        </div>
+                    {% endwith %}
+                {% else %}
+                    <div class="ai-chat-empty">
+                        <div class="ai-chat-empty-title">开始你的第一轮提问</div>
+                        <p class="text-muted mb-0">比如让 AI 帮你总结课程重点，或者解释某个看不懂的概念。</p>
+                    </div>
+                {% endif %}
+            </div>
+            <form method="post" class="ai-chat-form">
                 {% csrf_token %}
                 {{ form.as_p }}
                 <button type="submit" class="btn btn-primary">发送给 AI</button>
             </form>
         </div>
-        {% if result %}
-            <div class="section-card mt-4">
-                <h2 class="h5 mb-3">AI 回复</h2>
-                <div class="alert alert-info">{{ result.notice }}</div>
-                <div style="white-space: pre-wrap;">{{ result.content }}</div>
-            </div>
-        {% endif %}
     </div>
-    <div class="col-lg-5">
+    <div class="col-lg-4">
+        <div class="section-card mb-4">
+            <h2 class="h5 mb-3">建议提问</h2>
+            <div class="suggestion-list">
+                <div class="suggestion-card">帮我总结一下这门课的重点知识。</div>
+                <div class="suggestion-card">请用通俗的话解释一个我没学懂的概念。</div>
+                <div class="suggestion-card">给我一份期末复习计划。</div>
+                <div class="suggestion-card">这道作业题我应该从哪里下手？</div>
+            </div>
+        </div>
         <div class="section-card">
             <h2 class="h5 mb-3">最近聊天记录</h2>
             {% for item in chat_history %}
-                <div class="mb-3">
+                <div class="history-card">
                     <div class="fw-semibold">问：{{ item.question|truncatechars:60 }}</div>
                     <div class="small text-muted mb-2">{{ item.created_at|date:"Y-m-d H:i" }}</div>
-                    <div class="small" style="white-space: pre-wrap;">{{ item.answer|truncatechars:180 }}</div>
+                    <div class="small" style="white-space: pre-wrap;">{{ item.answer|truncatechars:160 }}</div>
                 </div>
             {% empty %}
                 <p class="text-muted mb-0">还没有聊天记录，先试着问一个课程问题吧。</p>

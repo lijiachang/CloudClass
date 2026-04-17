@@ -7,6 +7,7 @@
     </div>
     <div class="d-flex gap-2">
         <a class="btn btn-outline-dark" href="{% url 'ai_assistant:student_chat' %}">AI 聊天</a>
+        <a class="btn btn-outline-secondary" href="{% url 'courses:recommendations' %}">推荐中心</a>
         <a class="btn btn-outline-primary" href="{% url 'courses:list' %}">浏览课程</a>
     </div>
 </div>
@@ -31,23 +32,6 @@
 
 <div class="row g-4">
     <div class="col-lg-7">
-        <div class="section-card mb-4">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h2 class="h5 mb-0">为你推荐</h2>
-                <a href="{% url 'courses:recommendations' %}">进入推荐中心</a>
-            </div>
-            {% for course in recommended_courses %}
-                <div class="list-item-row">
-                    <div>
-                        <div class="fw-semibold">{{ course.title }}</div>
-                        <div class="small text-muted">热度 {{ course.heat_score }} · 收藏 {{ course.favorite_count }}</div>
-                    </div>
-                    <a class="btn btn-sm btn-primary" href="{% url 'courses:detail' course.pk %}">查看</a>
-                </div>
-            {% empty %}
-                <p class="text-muted mb-0">多浏览和收藏课程后，这里会越来越准确。</p>
-            {% endfor %}
-        </div>
         <div class="section-card mb-4">
             <h2 class="h5 mb-3">我的课程</h2>
             {% for course in enrollments %}
@@ -98,7 +82,7 @@
                 <div class="list-item-row">
                     <div>
                         <div class="fw-semibold">{{ course.title }}</div>
-                        <div class="small text-muted">热度 {{ course.heat_score }}</div>
+                        <div class="small text-muted">{{ course.category.name|default:"未分类" }} · {{ course.teacher.full_name }}</div>
                     </div>
                     <a class="btn btn-sm btn-outline-secondary" href="{% url 'courses:detail' course.pk %}">查看</a>
                 </div>

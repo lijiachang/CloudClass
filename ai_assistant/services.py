@@ -27,31 +27,19 @@ class TeacherAIService:
         if not api_key:
             return cls._build_demo_response(mode, prompt, "未检测到 DASHSCOPE_API_KEY，当前返回本地演示建议。")
 
-        payload = {
-            "model": os.getenv("DASHSCOPE_MODEL", cls.model),
-            "messages": [
+        result = cls._call_dashscope(
+            api_key=api_key,
+            messages=[
                 {"role": "system", "content": instruction},
                 {"role": "user", "content": prompt},
             ],
-            "temperature": 0.4,
-        }
-        req = request.Request(
-            cls.api_url,
-            data=json.dumps(payload).encode("utf-8"),
-            headers={
-                "Content-Type": "application/json",
-                "Authorization": f"Bearer {api_key}",
-            },
-            method="POST",
+            temperature=0.4,
         )
-        try:
-            with request.urlopen(req, timeout=30) as resp:
-                data = json.loads(resp.read().decode("utf-8"))
-        except (error.URLError, TimeoutError, json.JSONDecodeError):
-            return cls._build_demo_response(mode, prompt, "千问调用失败，当前返回本地演示建议。")
+        if result.get("error_notice"):
+            return cls._build_demo_response(mode, prompt, result["error_notice"])
 
         content = (
-            data.get("choices", [{}])[0]
+            result["data"].get("choices", [{}])[0]
             .get("message", {})
             .get("content")
         )
@@ -72,39 +60,27 @@ class TeacherAIService:
                 "notice": "未检测到 DASHSCOPE_API_KEY，当前返回本地演示回复。",
             }
 
-        payload = {
-            "model": os.getenv("DASHSCOPE_MODEL", cls.model),
-            "messages": [
+        result = cls._call_dashscope(
+            api_key=api_key,
+            messages=[
                 {
                     "role": "system",
                     "content": "你是一名面向大学生的课程学习助手，请用通俗、友好的中文回答问题，帮助学生理解课程内容。",
                 },
                 {"role": "user", "content": question},
             ],
-            "temperature": 0.6,
-        }
-        req = request.Request(
-            cls.api_url,
-            data=json.dumps(payload).encode("utf-8"),
-            headers={
-                "Content-Type": "application/json",
-                "Authorization": f"Bearer {api_key}",
-            },
-            method="POST",
+            temperature=0.6,
         )
-        try:
-            with request.urlopen(req, timeout=30) as resp:
-                data = json.loads(resp.read().decode("utf-8"))
-        except (error.URLError, TimeoutError, json.JSONDecodeError):
+        if result.get("error_notice"):
             return {
                 "content": (
                     "千问暂时不可用，当前返回本地演示回复。\n"
                     "建议你从课程目标、知识点、作业要求这几个角度继续整理问题，再和老师确认。"
                 ),
-                "notice": "千问调用失败，当前返回本地演示回复。",
+                "notice": result["error_notice"],
             }
 
-        content = data.get("choices", [{}])[0].get("message", {}).get("content")
+        content = result["data"].get("choices", [{}])[0].get("message", {}).get("content")
         if not content:
             return {
                 "content": "当前没有拿到有效回复，你可以换个问法再试一次。",
@@ -180,3 +156,38 @@ class TeacherAIService:
             ),
         }
         return {"content": templates[mode], "notice": notice}
+
+    @classmethod
+    def _call_dashscope(cls, api_key, messages, temperature):
+        payload = {
+            "model": os.getenv("DASHSCOPE_MODEL", cls.model),
+            "messages": messages,
+            "temperature": temperature,
+        }
+        req = request.Request(
+            cls.api_url,
+            data=json.dumps(payload).encode("utf-8"),
+            headers={
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {api_key}",
+            },
+            method="POST",
+        )
+        try:
+            with request.urlopen(req, timeout=30) as resp:
+                data = json.loads(resp.read().decode("utf-8"))
+                return {"data": data}
+        except error.HTTPError as exc:
+            body = exc.read().decode("utf-8", errors="replace")
+            try:
+                error_data = json.loads(body).get("error", {})
+            except json.JSONDecodeError:
+                error_data = {}
+            code = error_data.get("code", "")
+            if code == "AccessDenied.Unpurchased":
+                model_name = os.getenv("DASHSCOPE_MODEL", cls.model)
+                return {"error_notice": f"当前 DashScope 账号没有 `{model_name}` 的调用权限，已返回本地演示内容。"}
+            message = error_data.get("message") or f"HTTP {exc.code}"
+            return {"error_notice": f"千问调用失败：{message}，已返回本地演示内容。"}
+        except (error.URLError, TimeoutError, json.JSONDecodeError):
+            return {"error_notice": "千问调用失败，当前返回本地演示内容。"}

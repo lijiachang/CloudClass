@@ -37,7 +37,7 @@
                 <div class="list-item-row">
                     <div>
                         <div class="fw-semibold">{{ course.title }}</div>
-                        <div class="small text-muted">学生 {{ course.enrollment_count }} · 浏览 {{ course.view_count }} · 收藏 {{ course.favorite_count }}</div>
+                        <div class="small text-muted">{{ course.category.name|default:"未分类" }} · 学生 {{ course.enrollment_count }}</div>
                     </div>
                     <div class="d-flex gap-2">
                         <a class="btn btn-sm btn-outline-primary" href="{% url 'courses:teacher_edit' course.pk %}">编辑</a>

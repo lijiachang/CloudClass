@@ -24,6 +24,36 @@
 - 数据统计：学生、教师、管理员三类工作台统计卡片、热门课程和标签分布
 - 演示数据：一键初始化管理员、教师、多名学生及 10 门样例课程
 
+## 界面截图
+
+### 公共页面
+
+| 首页 | 登录 | 学生注册 |
+| --- | --- | --- |
+| ![首页](markdowns/2026-04-26-experiment-report-assets/desktop_screenshots/00-home-首页-桌面.png) | ![登录](markdowns/2026-04-26-experiment-report-assets/desktop_screenshots/01-login-登录界面-桌面.png) | ![学生注册](markdowns/2026-04-26-experiment-report-assets/desktop_screenshots/02-register-学生注册界面-桌面.png) |
+
+### 管理员
+
+| 工作台 | 公告管理 | Banner 管理 |
+| --- | --- | --- |
+| ![管理员工作台](markdowns/2026-04-26-experiment-report-assets/desktop_screenshots/10-admin-dashboard-管理员工作台-桌面.png) | ![公告管理](markdowns/2026-04-26-experiment-report-assets/desktop_screenshots/11-admin-announcement-create-公告管理-桌面.png) | ![Banner管理](markdowns/2026-04-26-experiment-report-assets/desktop_screenshots/12-admin-banner-create-Banner管理-桌面.png) |
+
+### 教师
+
+| 工作台 | 课程管理 | 课程统计 | AI 助教中心 |
+| --- | --- | --- | --- |
+| ![教师工作台](markdowns/2026-04-26-experiment-report-assets/desktop_screenshots/20-teacher-dashboard-教师工作台-桌面.png) | ![课程管理](markdowns/2026-04-26-experiment-report-assets/desktop_screenshots/21-teacher-course-manage-课程管理-桌面.png) | ![课程统计](markdowns/2026-04-26-experiment-report-assets/desktop_screenshots/22-teacher-course-analytics-课程统计-桌面.png) | ![AI助教中心](markdowns/2026-04-26-experiment-report-assets/desktop_screenshots/23-teacher-ai-center-AI助教中心-桌面.png) |
+
+### 学生
+
+| 工作台 | 课程中心 | 课程详情与选课 |
+| --- | --- | --- |
+| ![学生工作台](markdowns/2026-04-26-experiment-report-assets/desktop_screenshots/30-student-dashboard-学生工作台-桌面.png) | ![课程中心](markdowns/2026-04-26-experiment-report-assets/desktop_screenshots/31-student-course-list-课程中心-桌面.png) | ![课程详情](markdowns/2026-04-26-experiment-report-assets/desktop_screenshots/32-student-course-detail-课程详情与选课-桌面.png) |
+
+| 个性化推荐 | AI 聊天 |
+| --- | --- |
+| ![个性化推荐](markdowns/2026-04-26-experiment-report-assets/desktop_screenshots/33-student-recommendations-个性化推荐-桌面.png) | ![AI聊天](markdowns/2026-04-26-experiment-report-assets/desktop_screenshots/34-student-ai-chat-AI聊天-桌面.png) |
+
 ## 快速启动
 
 1. 创建虚拟环境并安装依赖：
